@@ -1,6 +1,7 @@
 import connection from "../DB/connection.js"
 import AuthRouter from './module/auth/auth.router.js'
 import { globalError } from "./utils/asyncHandler.js"
+import productRouter from './module/product/product.router.js'
 import cors from 'cors'
 
 const initializeApp  = (app, express)=> {
@@ -8,6 +9,7 @@ const initializeApp  = (app, express)=> {
     // app.use(cors());
     connection()
     app.use('/auth' , AuthRouter) 
+    app.use('/product' , productRouter)
     app.use('/{*eny}', (req, res, next) => {
         res.status(404).json({ 
             success: false,
