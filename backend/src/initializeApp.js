@@ -2,14 +2,18 @@ import connection from "../DB/connection.js"
 import AuthRouter from './module/auth/auth.router.js'
 import { globalError } from "./utils/asyncHandler.js"
 import productRouter from './module/product/product.router.js'
+import CategoryRouter from "./module/category/category.router.js"
 import cors from 'cors'
+import path from "path";
 
 const initializeApp  = (app, express)=> {
     app.use(express.json())
     // app.use(cors());
     connection()
     app.use('/auth' , AuthRouter) 
+     app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
     app.use('/product' , productRouter)
+    app.use('/category' , CategoryRouter)
     app.use('/{*eny}', (req, res, next) => {
         res.status(404).json({ 
             success: false,

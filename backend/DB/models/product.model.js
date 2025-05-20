@@ -45,6 +45,10 @@ const productSchema = new Schema(
       required: [true, "Stock quantity is required"],
       min: [0, "Stock cannot be negative"],
     },
+    isDeleted :{
+      type : Boolean ,
+      default : false 
+    }
   },
   { timestamps: true }
 );
