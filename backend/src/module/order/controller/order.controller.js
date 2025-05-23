@@ -2,7 +2,9 @@ import { asyncHandler } from "../../../utils/asyncHandler.js";
 import Product from "../../../../DB/models/product.model.js";
 import couponModel from "../../../../DB/models/coupon.model.js";
 import orderModel from "../../../../DB/models/order.model.js";
+import AppError from "../../../utils/AppError.js";
 
+// create new order
 export const createOrder = asyncHandler(async (req, res, next) => {
   const order = req.body;
 
@@ -40,4 +42,86 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   });
 
   res.status(200).json({ message: newOrder });
+});
+
+// get all orders
+export const getAllOrders = asyncHandler(async (req, res, next) => {
+  const orders = await orderModel.find();
+
+  if (!orders || orders.length === 0) {
+    return next(new AppError("No orders found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    results: orders.length,
+    data: {
+      orders,
+    },
+  });
+});
+
+// get order by id
+export const getOrderById = asyncHandler(async (req, res, next) => {
+  const { orderId } = req.params;
+  const order = await orderModel.findById(orderId);
+  if (!order) {
+    return next(new AppError("order not found", 404));
+  }
+  res.status(200).json({
+    status: "success",
+    data: {
+      order,
+    },
+  });
+});
+
+// update order status
+export const updateOrderStatus = asyncHandler(async (req, res, next) => {
+  const { orderId } = req.params;
+  const { orderStatus } = req.body;
+
+  const allowedStatuses = ["Pending", "Shipped", "Delivered", "Cancelled"];
+  if (!allowedStatuses.includes(orderStatus)) {
+    return res.status(400).json({ message: "Invalid status value" });
+  }
+  const order = await orderModel.findById(orderId);
+  if (!order) {
+    return next(new AppError("order not found", 404));
+  }
+
+  if (order.orderStatus === orderStatus) {
+    return next(new AppError("Order is already in this status", 400));
+  }
+
+  order.orderStatus = orderStatus;
+  await order.save();
+
+  res.status(200).json({
+    status: "success",
+    message: "Order status updated successfully",
+    order,
+  });
+});
+
+// filter orders
+export const filterOrdersByStatus = asyncHandler(async (req, res, next) => {
+  const { orderStatus } = req.query;
+
+  const allowedStatuses = ["Pending", "Shipped", "Delivered", "Cancelled"];
+  if (!allowedStatuses.includes(orderStatus)) {
+    return res.status(400).json({ message: "Invalid status value" });
+  }
+
+  const result = await orderModel.find({ orderStatus: orderStatus });
+  if (!result || result.length === 0) {
+    return next(new AppError(`No ${orderStatus} Orders Found`, 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: `${orderStatus} orders retrieved successfully`,
+    count: result.length,
+    data: result,
+  });
 });
