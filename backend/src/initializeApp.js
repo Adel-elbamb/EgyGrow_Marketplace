@@ -1,13 +1,16 @@
 import connection from "../DB/connection.js";
 import AuthRouter from "./module/auth/auth.router.js";
 import { globalError } from "./utils/asyncHandler.js";
-import cors from "cors";
+import productRouter from "./module/product/product.router.js";
+import orderRouter from "./module/order/order.router.js";
+import couponRouter from "./module/coupon/coupon.router.js";
 
 const initializeApp = (app, express) => {
   app.use(express.json());
-  // app.use(cors());
   connection();
   app.use("/product", productRouter);
+  app.use("/order", orderRouter);
+  app.use("/coupon", couponRouter);
   app.use("/auth", AuthRouter);
   app.use("/{*any}", (req, res, next) => {
     res.status(404).json({
