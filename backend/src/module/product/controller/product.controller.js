@@ -1,104 +1,129 @@
-import Product from "../../../../DB/models/product.model.js";
-import { asyncHandler } from "../../../utils/asyncHandler.js";
+import productModel from './../../../../DB/models/product.model.js';
+import categoryModel from '../../../../DB/models/category.model.js';
+import { asyncHandler } from './../../../utils/asyncHandler.js';
 
-//
-export const createProduct = asyncHandler(async (req, res) => {
-  const { name, description, price, quantity, category, images, stock } =
-    req.body;
 
-  if (
-    !name ||
-    !description ||
-    !price ||
-    !quantity ||
-    !category ||
-    stock === undefined
-  ) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Missing required fields" });
+/// products
+
+export const createProduct = asyncHandler(async (req, res, next) => {
+  const { name, description, price, category, stock, quantity } = req.body;
+
+  const categoryExists = await categoryModel.findById(category);
+  if (!categoryExists) {
+    return next(new Error("Invalid category ID", { cause: 400 }));
   }
 
-  const product = await Product.create({
+  const images = req.files?.map(file => file.filename) || [];
+
+  const product = await productModel.create({
     name,
     description,
     price,
+    stock,
     quantity,
     category,
-    images, // Optional field; default is handled by schema
-    stock,
+    images,
   });
 
-  res.status(201).json({
-    success: true,
-    message: "Product created successfully",
-    data: product,
-  });
+  res.status(201).json({ message: "Product created", product });
 });
 
-export const getProductByID = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const product = await Product.findById(id);
-  if (!product) {
-    return res
-      .status(404)
-      .json({ status: "fail", message: "Product Not Found" });
+export const getAllProducts = asyncHandler(async (req, res, next) => {
+  const products = await productModel.find({ isDeleted: false }).populate("category", "name _id");
+
+  if (!products.length) {
+    return next(new Error("No Products Found", { cause: 404 }));
   }
-  res.status(200).json({ status: "success", message: product });
+
+  res.status(200).json({ message: "Products retrieved", products });
 });
 
-// @desc    Get product by Name
+export const getProductById = asyncHandler(async (req, res, next) => {
+  const product = await productModel
+    .findOne({ _id: req.params.id, isDeleted: false })
+    .populate("category", "name _id");
+
+  if (!product) {
+    return next(new Error("Product not found", { cause: 404 }));
+  }
+
+  res.status(200).json({ message: "Product retrieved", product });
+});
+
+export const updateProduct = asyncHandler(async (req, res, next) => {
+  const { category } = req.body;
+
+  if (category) {
+    const categoryExists = await categoryModel.findById(category);
+    if (!categoryExists) {
+      return next(new Error("Invalid category ID", { cause: 400 }));
+    }
+  }
+
+  const updatedData = {
+    ...req.body,
+  };
+
+  if (req.files?.length) {
+    updatedData.images = req.files.map(file => file.filename);
+  }
+
+  const updated = await productModel
+    .findByIdAndUpdate(req.params.id, updatedData, { new: true })
+    .populate("category", "name _id");
+
+  if (!updated) {
+    return next(new Error("Product not found", { cause: 404 }));
+  }
+
+  res.status(200).json({ message: "Product updated", product: updated });
+});
+
+export const deleteProduct = asyncHandler(async (req, res, next) => {
+  const deleted = await productModel.findByIdAndUpdate(req.params.id, { isDeleted: true }, { new: true });
+
+  if (!deleted) {
+    return next(new Error("Product not found", { cause: 404 }));
+  }
+
+  res.status(200).json({ message: "Product deleted" });
+});
+
 export const getProductByName = asyncHandler(async (req, res, next) => {
   const { name } = req.params;
-  const product = await Product.findOne({ name });
+  const product = await productModel.findOne({ name, isDeleted: false });
+
   if (!product) {
-    return next(new Error("Product Not Found", { statusCode: 404 }));
+    return next(new Error("Product Not Found", { cause: 404 }));
   }
-  return res.status(200).json({ status: "success", data: product });
+
+  res.status(200).json({ message: "Product retrieved", product });
 });
 
-// @desc    Get products by category ID
+
 export const getProductsByCatId = asyncHandler(async (req, res, next) => {
-  const { page } = req.params.page || 1;
-  const { limit } = req.params.limit || 15;
-  const skip = (parseInt(page) - 1) * parseInt(limit);
-  const { categoryID } = req.params.categoryID;
-  let products = await Product.find({ category: categoryID })
+  const { categoryID } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 15;
+  const skip = (page - 1) * limit;
+
+  const products = await productModel
+    .find({ category: categoryID, isDeleted: false })
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .populate("category", "name _id");
 
-  const total = await Product.countDocuments({ category: categoryID });
-
-  if (!products) {
-    return next(new Error("No Products Found", { statusCode: 404 }));
+  if (!products.length) {
+    return next(new Error("No Products Found for this category", { cause: 404 }));
   }
 
-  return res.status(200).json({
-    status: "success",
-    page: page,
+  const total = await productModel.countDocuments({ category: categoryID, isDeleted: false });
+
+  res.status(200).json({
+    message: "Products retrieved",
+    page,
     pages: Math.ceil(total / limit),
-    total: total,
-    data: products,
-  });
-});
-
-// @desc    Get all products
-export const getAllProducts = asyncHandler(async (req, res, next) => {
-  const { page } = req.params.page || 1;
-  const { limit } = req.params.limit || 15;
-  const skip = (parseInt(page) - 1) * parseInt(limit);
-  const products = Product.find().skip(skip).limit(limit);
-  const total = await Product.countDocuments();
-
-  if (!products) {
-    return next(new Error("No Products Found", { statusCode: 404 }));
-  }
-
-  return res.status(200).json({
-    status: "success",
-    page: page,
-    pages: Math.ceil(total / limit),
-    total: total,
+    total,
     data: products,
   });
 });
