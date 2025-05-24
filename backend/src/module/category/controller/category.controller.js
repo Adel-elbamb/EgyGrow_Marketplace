@@ -1,5 +1,5 @@
 import {asyncHandler} from "./../../../utils/asyncHandler.js";
-import categoryModel from "./../../../../DB/models/Category.model.js";
+import categoryModel from "./../../../../DB/models/category.model.js";
 
 
 

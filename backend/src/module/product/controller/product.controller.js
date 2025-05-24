@@ -1,6 +1,9 @@
 import productModel from './../../../../DB/models/product.model.js';
-import categoryModel from './../../../../DB/models/Category.model.js';
+import categoryModel from '../../../../DB/models/category.model.js';
 import { asyncHandler } from './../../../utils/asyncHandler.js';
+
+
+/// products
 
 export const createProduct = asyncHandler(async (req, res, next) => {
   const { name, description, price, category, stock, quantity } = req.body;
