@@ -3,6 +3,7 @@ import Product from "../../../../DB/models/product.model.js";
 import couponModel from "../../../../DB/models/coupon.model.js";
 import orderModel from "../../../../DB/models/order.model.js";
 import AppError from "../../../utils/AppError.js";
+import { sendEmail } from "../../../utils/sendEmail.js";
 
 // create new order
 export const createOrder = asyncHandler(async (req, res, next) => {
@@ -40,6 +41,12 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     couponCode: couponValidation ? order.couponCode : null,
     paymentMethod: order.paymentMethod,
   });
+
+  await sendEmail(
+    "ao268314@gmail.com",
+    "New Order Created",
+    `<p>New order ${newOrder} placed with total: ${totalprice.toFixed(2)}</p>`
+  );
 
   res.status(200).json({ message: newOrder });
 });
