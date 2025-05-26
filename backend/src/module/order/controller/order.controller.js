@@ -42,11 +42,11 @@ export const createOrder = asyncHandler(async (req, res, next) => {
     paymentMethod: order.paymentMethod,
   });
 
-  await sendEmail(
-    "ao268314@gmail.com",
-    "New Order Created",
-    `<p>New order ${newOrder} placed with total: ${totalprice.toFixed(2)}</p>`
-  );
+  // await sendEmail(
+  //   "ao268314@gmail.com",
+  //   "New Order Created",
+  //   `<p>New order ${newOrder} placed with total: ${totalprice.toFixed(2)}</p>`
+  // );
 
   res.status(200).json({ message: newOrder });
 });
