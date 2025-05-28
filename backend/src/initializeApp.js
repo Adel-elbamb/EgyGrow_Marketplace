@@ -10,6 +10,7 @@ import path from "path";
 
 const initializeApp = (app, express) => {
   app.use(express.json());
+  app.use(cors());
   connection();
   
     app.use('/auth' , AuthRouter) 

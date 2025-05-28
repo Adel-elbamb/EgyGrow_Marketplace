@@ -1,0 +1,80 @@
+.navbar {
+  background-color: #f8f9fa; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  padding: 1rem 0;
+}
+
+.navbar-brand {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2e7d32 !important; 
+  transition: color 0.3s ease;
+}
+
+.navbar-brand:hover {
+  color: #1b5e20 !important; 
+}
+
+.navLink {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.1rem;
+  color: #424242 !important; 
+  margin: 0 0.5rem;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.navLink:hover {
+  color: #2e7d32 !important; 
+  transform: translateY(-2px); 
+}
+
+
+.languageSelect {
+  border: 1px solid #2e7d32;
+  border-radius: 5px;
+  padding: 0.3rem 0.5rem;
+  background-color: #ffffff;
+  color: #2e7d32;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.languageSelect:hover {
+  background-color: #2e7d32;
+  color: #ffffff;
+}
+
+.languageSelect:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(46, 125, 50, 0.5);
+}
+
+.loginBtn {
+  border-color: #2e7d32 !important;
+  color: #2e7d32 !important;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.loginBtn:hover {
+  background-color: #2e7d32 !important;
+  color: #ffffff !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .navLink {
+    margin: 0.5rem 0;
+  }
+
+  .languageSelect {
+    margin: 0.5rem 0;
+  }
+
+  .loginBtn {
+    width: 100%;
+    text-align: center;
+  }
+}

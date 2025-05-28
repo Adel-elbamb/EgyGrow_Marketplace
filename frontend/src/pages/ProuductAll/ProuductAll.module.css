@@ -1,0 +1,34 @@
+.productContainer {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.productContainer h2 {
+  color: #2e7d32;
+  margin-bottom: 1.5rem;
+}
+
+.productList {
+  list-style: none;
+  padding: 0;
+}
+
+.productItem {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9;
+}
+
+.productItem h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.productItem p {
+  color: #666;
+  margin: 0;
+}
