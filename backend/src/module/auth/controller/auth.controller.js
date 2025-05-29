@@ -2,14 +2,15 @@ import userModel from '../../../../DB/models/user.model.js';
 import { asyncHandler } from '../../../utils/asyncHandler.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-
+import AppError  from '../../../utils/AppError.js';
 
 export const createAdmin_one = asyncHandler(async (req, res, next) => {
   const { email, password, role } = req.body;
 
   const existingAdmin = await userModel.findOne({ role: "admin" });
   if (existingAdmin && role === "admin") {
-    return next(new Error("Admin already exists", { cause: 400 }));
+
+    return next(new AppError("Admin already exists", 400));
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -32,7 +33,7 @@ export const login = asyncHandler(async (req, res, next) => {
   if (!user) return next(new Error("Email or password is invalid", { cause: 400 }));
 
   const match = await bcrypt.compare(password, user.password);
-  if (!match) return next(new Error("Email or password is invalid", { cause: 400 }));
+  if (!match) return next(new AppError("Email or password is invalid", 400));
 
   const token = jwt.sign(
     { _id: user.id, email: user.email, role: user.role },
@@ -48,7 +49,7 @@ export const createSubAdmin = asyncHandler(async (req, res, next) => {
 
   const existingUser = await userModel.findOne({ email });
   if (existingUser) {
-    return next(new Error("Email already in use", { cause: 400 }));
+    return next(new AppError("Email already in use", 400));
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -65,7 +66,7 @@ export const getAllSubAdmins = asyncHandler(async (req, res, next) => {
   const subAdmins = await userModel.find({ role: "subAdmin", isDeleted: false });
 
   if (!subAdmins.length) {
-    return next(new Error("No SubAdmins Found", { cause: 404 }));
+    return next(new AppError("No SubAdmins Found", 404));
   }
 
   res.status(200).json({ subAdmins });
@@ -76,7 +77,7 @@ export const getSubAdminById = asyncHandler(async (req, res, next) => {
   const subAdmin = await userModel.findOne({ _id: id, role: "subAdmin", isDeleted: false });
 
   if (!subAdmin) {
-    return next(new Error("SubAdmin Not Found", { cause: 404 }));
+    return next(new AppError("SubAdmin Not Found", 404));
   }
 
   res.status(200).json({ subAdmin });
@@ -97,7 +98,7 @@ export const updateSubAdmin = asyncHandler(async (req, res, next) => {
   );
 
   if (!updated) {
-    return next(new Error("SubAdmin Not Found", { cause: 404 }));
+    return next(new AppError("SubAdmin Not Found", 404));
   }
 
   res.status(200).json({ message: "SubAdmin Updated", updated });
@@ -114,7 +115,7 @@ export const softDeleteSubAdmin = asyncHandler(async (req, res, next) => {
   );
 
   if (!updated) {
-    return next(new Error("SubAdmin Not Found", { cause: 404 }));
+    return next(new AppError("SubAdmin Not Found", 404));
   }
 
   res.status(200).json({ message: "SubAdmin soft deleted" });
@@ -127,7 +128,7 @@ export const hardDeleteSubAdmin = asyncHandler(async (req, res, next) => {
   const deleted = await userModel.findOneAndDelete({ _id: id, role: "subAdmin" });
 
   if (!deleted) {
-    return next(new Error("SubAdmin Not Found", { cause: 404 }));
+    return next(new AppError("SubAdmin Not Found", 404));
   }
 
   res.status(200).json({ message: "SubAdmin permanently deleted" });
@@ -140,7 +141,7 @@ export const deleteOwnAdmin = asyncHandler(async (req, res, next) => {
   const deleted = await userModel.findOneAndDelete({ _id: adminId, role: "admin" });
 
   if (!deleted) {
-    return next(new Error("Admin Not Found", { cause: 404 }));
+    return next(new AppError("Admin Not Found", 404));
   }
 
   res.status(200).json({ message: "Admin account permanently deleted" });

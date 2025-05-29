@@ -13,7 +13,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   const products = await Product.find({ _id: { $in: productIds } });
 
   if (products.length !== productIds.length) {
-    return next(new Error("Some products not found", { cause: 400 }));
+    return next(new AppError("Some products not found", 400));
   }
 
   let totalprice = 0;
@@ -28,7 +28,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
 
   const coupon = await couponModel.findOne({ code: order.couponCode });
   const couponValidation =
-    (coupon.expirationDate > new Date() && coupon.isActive) || false;
+    (coupon?.expirationDate > new Date() && coupon?.isActive) || false;
 
   if (couponValidation) {
     totalprice = totalprice * ((100 - coupon.discountPercentage) / 100);
@@ -48,7 +48,7 @@ export const createOrder = asyncHandler(async (req, res, next) => {
   //   `<p>New order ${newOrder} placed with total: ${totalprice.toFixed(2)}</p>`
   // );
 
-  res.status(200).json({ message: newOrder });
+  res.status(201).json({ message: "Order created successfully", order: newOrder });
 });
 
 // get all orders
@@ -73,7 +73,7 @@ export const getOrderById = asyncHandler(async (req, res, next) => {
   const { orderId } = req.params;
   const order = await orderModel.findById(orderId);
   if (!order) {
-    return next(new AppError("order not found", 404));
+    return next(new AppError("Order not found", 404));
   }
   res.status(200).json({
     status: "success",
@@ -88,13 +88,9 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
   const { orderId } = req.params;
   const { orderStatus } = req.body;
 
-  const allowedStatuses = ["Pending", "Shipped", "Delivered", "Cancelled"];
-  if (!allowedStatuses.includes(orderStatus)) {
-    return res.status(400).json({ message: "Invalid status value" });
-  }
   const order = await orderModel.findById(orderId);
   if (!order) {
-    return next(new AppError("order not found", 404));
+    return next(new AppError("Order not found", 404));
   }
 
   if (order.orderStatus === orderStatus) {
@@ -114,11 +110,6 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
 // filter orders
 export const filterOrdersByStatus = asyncHandler(async (req, res, next) => {
   const { orderStatus } = req.query;
-
-  const allowedStatuses = ["Pending", "Shipped", "Delivered", "Cancelled"];
-  if (!allowedStatuses.includes(orderStatus)) {
-    return res.status(400).json({ message: "Invalid status value" });
-  }
 
   const result = await orderModel.find({ orderStatus: orderStatus });
   if (!result || result.length === 0) {
