@@ -1,0 +1,232 @@
+.homeContainer {
+  font-family: 'Roboto', sans-serif;
+  color: #fff;
+}
+
+.heroSection { 
+  width: 100%; 
+  min-height: 500px; 
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: background-image 1s ease-in-out; 
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 0;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+}
+
+.heroContent h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  direction: rtl;
+}
+/* button */
+.ctaButton {
+  background: linear-gradient(to right, #4caf50, #2e7d32);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+   text-decoration: none;
+  display: inline-block;
+  
+  margin-right: 1rem;
+}
+
+
+.ctaButton:hover {
+  background: linear-gradient(to right, #66bb6a, #388e3c);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
+}
+
+.ctaButton:active {
+  transform: scale(0.98);
+}
+
+
+/* About Section */
+.aboutSection {
+  padding: 3rem 0;
+  background-color: #fff;
+  text-align: center;
+  color: #083c21;
+}
+
+.aboutSection h2 {
+  color:#083c21 ;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.aboutContent {
+  display: flex;
+  justify-content: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.aboutText {
+  font-size: 1.2rem;
+  line-height: 1.8;
+}
+/* === Product Section === */
+
+.ProductSection {
+  padding: 3rem 0;
+  background-color: #9ebcad3b;
+  text-align: center;
+}
+
+.ProductSection h2 {
+  color: #083c21;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.ProductContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3rem; 
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  flex-wrap: wrap;
+  direction: rtl;
+}
+
+.ProductImage {
+  flex: 1;
+  width: 50%;
+  max-width: 500px; 
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.ProductTextContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; 
+  min-width: 280px;
+}
+
+.ProductText {
+  text-align: right;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color:#083c21;
+  margin-bottom: 1.5rem; 
+}
+
+.ProductTextb {
+  color: #388e3c;
+  display: inline; 
+}
+
+
+/* === Scroll to Top Button === */
+.scrollTopButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #2e7d32;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  z-index: 1000;
+}
+
+.scrollTopButton:hover {
+  background-color: #1b5e20;
+  transform: scale(1.1);
+}
+
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .heroSection {
+    min-height: 200px;
+  }
+
+  .heroOverlay h1 {
+    font-size: 1.8rem;
+  }
+
+  .heroOverlay p {
+    font-size: 1rem;
+  }
+
+  .ctaButton {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  .aboutContent {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .aboutText {
+    text-align: center;
+  }
+
+  .imagePlaceholder {
+    height: 150px;
+  }
+
+  .ProductContent {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .ProductText {
+    text-align: center;
+  }
+
+  .ProductImage {
+    max-width: 100%;
+  }
+
+  .scrollTopButton {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+}

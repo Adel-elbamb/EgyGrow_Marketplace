@@ -1,7 +1,6 @@
-import productModel from './../../../../DB/models/product.model.js';
-import categoryModel from '../../../../DB/models/category.model.js';
-import { asyncHandler } from './../../../utils/asyncHandler.js';
-
+import productModel from "./../../../../DB/models/product.model.js";
+import categoryModel from "../../../../DB/models/category.model.js";
+import { asyncHandler } from "./../../../utils/asyncHandler.js";
 
 /// products
 
@@ -13,7 +12,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     return next(new Error("Invalid category ID", { cause: 400 }));
   }
 
-  const images = req.files?.map(file => file.filename) || [];
+  const images = req.files?.map((file) => file.filename) || [];
 
   const product = await productModel.create({
     name,
@@ -29,7 +28,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllProducts = asyncHandler(async (req, res, next) => {
-  const products = await productModel.find({ isDeleted: false }).populate("category", "name _id");
+  const products = await productModel.find().populate("category", "name _id");
 
   if (!products.length) {
     return next(new Error("No Products Found", { cause: 404 }));
@@ -65,7 +64,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   };
 
   if (req.files?.length) {
-    updatedData.images = req.files.map(file => file.filename);
+    updatedData.images = req.files.map((file) => file.filename);
   }
 
   const updated = await productModel
@@ -80,7 +79,11 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 });
 
 export const deleteProduct = asyncHandler(async (req, res, next) => {
-  const deleted = await productModel.findByIdAndUpdate(req.params.id, { isDeleted: true }, { new: true });
+  const deleted = await productModel.findByIdAndUpdate(
+    req.params.id,
+    { isDeleted: true },
+    { new: true }
+  );
 
   if (!deleted) {
     return next(new Error("Product not found", { cause: 404 }));
@@ -100,7 +103,6 @@ export const getProductByName = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Product retrieved", product });
 });
 
-
 export const getProductsByCatId = asyncHandler(async (req, res, next) => {
   const { categoryID } = req.params;
   const page = parseInt(req.query.page) || 1;
@@ -114,10 +116,15 @@ export const getProductsByCatId = asyncHandler(async (req, res, next) => {
     .populate("category", "name _id");
 
   if (!products.length) {
-    return next(new Error("No Products Found for this category", { cause: 404 }));
+    return next(
+      new Error("No Products Found for this category", { cause: 404 })
+    );
   }
 
-  const total = await productModel.countDocuments({ category: categoryID, isDeleted: false });
+  const total = await productModel.countDocuments({
+    category: categoryID,
+    isDeleted: false,
+  });
 
   res.status(200).json({
     message: "Products retrieved",
