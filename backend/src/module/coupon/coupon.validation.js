@@ -1,50 +1,24 @@
-import joi from "joi";
-import { generalfields } from '../../utils/generalfields.js';
+import Joi from "joi";
 
-const couponValidationSchema = joi.object({
-    code: joi.string().required().messages({
-        'any.required': 'Coupon code is required'
-    }),
-    discountPercentage: joi.number().min(0).max(100).required().messages({
-        'number.min': 'Discount percentage cannot be negative',
-        'number.max': 'Discount percentage cannot exceed 100',
-        'any.required': 'Discount percentage is required'
-    }),
-    expirationDate: joi.date().greater('now').required().messages({
-        'date.greater': 'Expiration date must be in the future',
-        'any.required': 'Expiration date is required'
-    }),
-    isActive: joi.boolean().default(true)
+const singleCouponSchema = Joi.object({
+  code: Joi.string().required(),
+  discountPercentage: Joi.number().min(0).max(100).required(),
+  expirationDate: Joi.date().required(),
 });
 
-export const createCouponSchema = {
-    body: joi.alternatives().try(
-        couponValidationSchema,
-        joi.array().items(couponValidationSchema)
-    )
-};
-
-export const updateCouponStatusSchema = {
-    params: joi.object({
-        id: generalfields.id
-    }),
-    body: joi.object({
-        isActive: joi.boolean().required().messages({
-            'any.required': 'isActive status is required'
-        })
-    })
-};
-
-export const deleteCouponSchema = {
-    params: joi.object({
-        id: generalfields.id
-    })
-};
+const couponValidation = Joi.array().items(singleCouponSchema);
 
 export const validateCoupon = (req, res, next) => {
-    const validation = createCouponSchema.body.validate(req.body, { abortEarly: false });
-    if (validation.error) {
-        return next(new AppError(validation.error.details[0].message, 400));
-    }
-    next();
+  const { error } = couponValidation.validate(req.body, { abortEarly: false });
+
+  if (error) {
+    return next(
+      new AppError("Validation Error", 400, {
+        type: "validation",
+        details: error.details,
+      })
+    );
+  }
+  console.log("pass validation");
+  next();
 };
