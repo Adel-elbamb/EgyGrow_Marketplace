@@ -13,8 +13,11 @@ import Home from "./pages/Home/Home";
 import About from './pages/About/About';
 import Contact from './pages/Contact/Contact';
 import ProductAll from './pages/ProuductAll/ProuductAll';
-import Search from './pages/Search/Search';
+
 import Login from './pages/Login/Login';
+import ProductDetails from './pages/ProductDetails/ProductDetails';
+
+
 
 function App() {
   return (
@@ -27,8 +30,10 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/products" element={<ProductAll />} />
-        <Route path="/search" element={<Search />} />
+        <Route path="product/:id" element={<ProductDetails />} />
+
         <Route path="/login" element={<Login />} />
+
       </Routes>
     </div>
     <Footer />

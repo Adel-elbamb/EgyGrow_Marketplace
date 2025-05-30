@@ -28,6 +28,11 @@
 .heroContent {
   position: relative;
   z-index: 1;
+  
+}
+.heroContent p{
+  color: white;
+
 }
 
 .heroContent h1 {
@@ -179,54 +184,91 @@
 }
 
 
-/* === Responsive === */
+/* ===== Responsive Breakpoints ===== */
+@media (max-width: 992px) {
+  .heroSection {
+    min-height: 60vh;
+  }
+  
+  .heroContent h1 {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+  }
+  
+  .heroContent p {
+    font-size: 1.1rem;
+  }
+  
+  .ctaButton {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+  min-width: 160px;
+  }
+}
+
 @media (max-width: 768px) {
   .heroSection {
-    min-height: 200px;
+    min-height: 50vh;
   }
-
-  .heroOverlay h1 {
-    font-size: 1.8rem;
+  
+  .aboutSection,
+  .ProductSection {
+    padding: 3rem 1rem;
   }
-
-  .heroOverlay p {
-    font-size: 1rem;
-  }
-
-  .ctaButton {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-  }
-
-  .aboutContent {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .aboutText {
-    text-align: center;
-  }
-
-  .imagePlaceholder {
-    height: 150px;
-  }
-
+  
   .ProductContent {
-    flex-direction: column;
-    text-align: center;
+    flex-direction: column-reverse;
+    gap: 2rem;
   }
-
+  
   .ProductText {
     text-align: center;
+    align-items: center;
   }
-
-  .ProductImage {
-    max-width: 100%;
+  
+  .ProductTextContainer {
+    align-items: center;
   }
+  
+  .scrollTopButton {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+  }
+}
 
+@media (max-width: 576px) {
+  .heroSection {
+    min-height: 70vh;
+  }
+  
+  .heroContent h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  .heroContent p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .ctaButton {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    min-width: 140px;
+    margin: 0.3rem;
+  }
+  
+  .aboutText,
+  .ProductText {
+    text-align: center;
+    line-height: 1.6;
+  }
+  
   .scrollTopButton {
     width: 40px;
     height: 40px;
     font-size: 1.2rem;
+    bottom: 15px;
+    right: 15px;
   }
 }

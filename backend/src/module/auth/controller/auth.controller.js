@@ -2,20 +2,15 @@ import userModel from '../../../../DB/models/user.model.js';
 import { asyncHandler } from '../../../utils/asyncHandler.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-
-// دالة مساعدة لإنشاء خطأ يحتوي على كود الحالة
-const createHttpError = (message, statusCode) => {
-  const error = new Error(message);
-  error.statusCode = statusCode;
-  return error;
-};
+import AppError  from '../../../utils/AppError.js';
 
 export const createAdmin_one = asyncHandler(async (req, res, next) => {
   const { email, password, role } = req.body;
 
   const existingAdmin = await userModel.findOne({ role: "admin" });
   if (existingAdmin && role === "admin") {
-    return next(createHttpError("Admin already exists", 400));
+
+    return next(new AppError("Admin already exists", 400));
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,14 +25,15 @@ export const createAdmin_one = asyncHandler(async (req, res, next) => {
   return res.status(201).json({ message: "Admin successfully created", token });
 });
 
+
 export const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
   const user = await userModel.findOne({ email, isDeleted: false });
-  if (!user) return next(createHttpError("Email or password is invalid", 400));
+  if (!user) return next(new Error("Email or password is invalid", { cause: 400 }));
 
   const match = await bcrypt.compare(password, user.password);
-  if (!match) return next(createHttpError("Email or password is invalid", 400));
+  if (!match) return next(new AppError("Email or password is invalid", 400));
 
   const token = jwt.sign(
     { _id: user.id, email: user.email, role: user.role },
@@ -53,7 +49,7 @@ export const createSubAdmin = asyncHandler(async (req, res, next) => {
 
   const existingUser = await userModel.findOne({ email });
   if (existingUser) {
-    return next(createHttpError("Email already in use", 400));
+    return next(new AppError("Email already in use", 400));
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -70,7 +66,7 @@ export const getAllSubAdmins = asyncHandler(async (req, res, next) => {
   const subAdmins = await userModel.find({ role: "subAdmin", isDeleted: false });
 
   if (!subAdmins.length) {
-    return next(createHttpError("No SubAdmins Found", 404));
+    return next(new AppError("No SubAdmins Found", 404));
   }
 
   res.status(200).json({ subAdmins });
@@ -81,7 +77,7 @@ export const getSubAdminById = asyncHandler(async (req, res, next) => {
   const subAdmin = await userModel.findOne({ _id: id, role: "subAdmin", isDeleted: false });
 
   if (!subAdmin) {
-    return next(createHttpError("SubAdmin Not Found", 404));
+    return next(new AppError("SubAdmin Not Found", 404));
   }
 
   res.status(200).json({ subAdmin });
@@ -102,12 +98,13 @@ export const updateSubAdmin = asyncHandler(async (req, res, next) => {
   );
 
   if (!updated) {
-    return next(createHttpError("SubAdmin Not Found", 404));
+    return next(new AppError("SubAdmin Not Found", 404));
   }
 
   res.status(200).json({ message: "SubAdmin Updated", updated });
 });
 
+// Soft Delete SubAdmin
 export const softDeleteSubAdmin = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
@@ -118,31 +115,33 @@ export const softDeleteSubAdmin = asyncHandler(async (req, res, next) => {
   );
 
   if (!updated) {
-    return next(createHttpError("SubAdmin Not Found", 404));
+    return next(new AppError("SubAdmin Not Found", 404));
   }
 
   res.status(200).json({ message: "SubAdmin soft deleted" });
 });
 
+// Hard Delete SubAdmin
 export const hardDeleteSubAdmin = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   const deleted = await userModel.findOneAndDelete({ _id: id, role: "subAdmin" });
 
   if (!deleted) {
-    return next(createHttpError("SubAdmin Not Found", 404));
+    return next(new AppError("SubAdmin Not Found", 404));
   }
 
   res.status(200).json({ message: "SubAdmin permanently deleted" });
 });
 
+// (Hard Delete)
 export const deleteOwnAdmin = asyncHandler(async (req, res, next) => {
   const adminId = req.user._id;
 
   const deleted = await userModel.findOneAndDelete({ _id: adminId, role: "admin" });
 
   if (!deleted) {
-    return next(createHttpError("Admin Not Found", 404));
+    return next(new AppError("Admin Not Found", 404));
   }
 
   res.status(200).json({ message: "Admin account permanently deleted" });

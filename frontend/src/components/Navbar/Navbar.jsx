@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import styles from './Navbar.module.css';
-
-
+import { useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
-  const [language, setLanguage] = useState("En");
+  // const [language, setLanguage] = useState("En");
 
-  const changeLanguage = (e) => {
-    setLanguage(e.target.value);
-  };
-
+  // const changeLanguage = (e) => {
+  //   setLanguage(e.target.value);
+  // };
+const cartCount = useSelector((state) => state.cart.count);
   return (
     <nav className={`navbar navbar-expand-lg navbar-light ${styles.navbar}`}>
       <div className="container">
@@ -40,16 +41,21 @@ const Navbar = () => {
             <li className="nav-item">
               <Link className={`nav-link ${styles.navLink}`} to="/contact">Contact Us</Link>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <select className={styles.languageSelect} value={language} onChange={changeLanguage}>
                 <option value="En">English</option>
                 <option value="Ar">Arabic</option>
               </select>
-            </li>
+            </li> */}
           </ul>
+          <div className={styles.cart}>
+        <FontAwesomeIcon icon={faShoppingCart} />
+        {cartCount > 0 && <span className={styles.cartCount}>{cartCount}</span>}
+      </div>
           <div className="d-flex">
             <Link className={`btn btn-outline-primary me-2 ${styles.loginBtn}`} to="/login">Login</Link>
           </div>
+
         </div>
       </div>
     </nav>
