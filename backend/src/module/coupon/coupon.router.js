@@ -5,37 +5,11 @@ import {
   deleteCoupon,
   getAllCoupons,
 } from "./controller/coupon.controller.js";
-import { auth, restrictTo } from "../../middleware/auth.js";
-import validation from "../../middleware/validation.js";
-import {
-  createCouponSchema,
-  updateCouponStatusSchema,
-  deleteCouponSchema
-} from "./coupon.validation.js";
+import { validateCoupon } from "./coupon.validation.js";
 
 const router = express.Router();
-
 router.get("/", getAllCoupons);
-
-router.post("/add-coupon", 
-  auth, 
-  restrictTo("admin", "subAdmin"),
-  validation(createCouponSchema), 
-  createCoupon
-);
-
-router.patch("/update-coupon/:id", 
-  auth, 
-  restrictTo("admin", "subAdmin"),
-  validation(updateCouponStatusSchema),
-  updateCouponStatus
-);
-
-router.delete("/delete-coupon/:id", 
-  auth, 
-  restrictTo("admin", "subAdmin"),
-  validation(deleteCouponSchema),
-  deleteCoupon
-);
-
+router.post("/add-coupon", validateCoupon, createCoupon);
+router.patch("/update-coupon/:id", updateCouponStatus);
+router.delete("/delete-coupon/:id", deleteCoupon);
 export default router;

@@ -1,56 +1,28 @@
-const validation = (schema) => {
+const validation = (schema, containHeaders = false) => {
     return (req, res, next) => {
         try {
-            let validationErrors = [];
-
-            // Validate request body if schema has body validation
-            if (schema.body) {
-                const bodyValidation = schema.body.validate(req.body, { abortEarly: false });
-                if (bodyValidation.error) {
-                    validationErrors.push(...bodyValidation.error.details);
-                }
+            let methods = { ...req.body, ...req.params, ...req.query };
+            
+            if (req.file) {
+                methods.file = req.file;
             }
-
-            // Validate URL parameters if schema has params validation
-            if (schema.params) {
-                const paramsValidation = schema.params.validate(req.params, { abortEarly: false });
-                if (paramsValidation.error) {
-                    validationErrors.push(...paramsValidation.error.details);
-                }
+            if (req.files) {
+                methods.files = req.files;
             }
-
-            // Validate query parameters if schema has query validation
-            if (schema.query) {
-                const queryValidation = schema.query.validate(req.query, { abortEarly: false });
-                if (queryValidation.error) {
-                    validationErrors.push(...queryValidation.error.details);
-                }
+            if (req.headers.auth && containHeaders) {
+                methods = { auth: req.headers.auth };
             }
-
-            // Handle file uploads if present
-            if (schema.file && req.file) {
-                const fileValidation = schema.file.validate(req.file, { abortEarly: false });
-                if (fileValidation.error) {
-                    validationErrors.push(...fileValidation.error.details);
-                }
+            
+            const validationresult = schema.validate(methods, { abortEarly: false });
+            
+            if (validationresult.error) {
+                req.validationresult = validationresult.error;
+                return next(new Error('validation error', { cause: 400 }));
             }
-
-            if (schema.files && req.files) {
-                const filesValidation = schema.files.validate(req.files, { abortEarly: false });
-                if (filesValidation.error) {
-                    validationErrors.push(...filesValidation.error.details);
-                }
-            }
-
-            // If any validation errors occurred
-            if (validationErrors.length > 0) {
-                req.validationErrors = validationErrors;
-                return next(new Error('Validation error', { cause: 400 }));
-            }
-
-            return next();
+            
+            next();
         } catch (error) {
-            return next(new Error(`Validation middleware error: ${error.message}`, { cause: 500 }));
+            return res.json({ message: error.message, stack: error.stack });
         }
     };
 };

@@ -1,7 +1,6 @@
 import productModel from './../../../../DB/models/product.model.js';
 import categoryModel from '../../../../DB/models/category.model.js';
 import { asyncHandler } from './../../../utils/asyncHandler.js';
-import AppError  from '../../../utils/AppError.js';
 
 
 /// products
@@ -11,7 +10,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
   const categoryExists = await categoryModel.findById(category);
   if (!categoryExists) {
-    return next(new AppError("Invalid category ID", 400));
+    return next(new Error("Invalid category ID", { cause: 400 }));
   }
 
   const images = req.files?.map(file => file.filename) || [];
@@ -33,7 +32,7 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
   const products = await productModel.find({ isDeleted: false }).populate("category", "name _id");
 
   if (!products.length) {
-    return next(new AppError("No Products Found", 404));
+    return next(new Error("No Products Found", { cause: 404 }));
   }
 
   res.status(200).json({ message: "Products retrieved", products });
@@ -45,7 +44,7 @@ export const getProductById = asyncHandler(async (req, res, next) => {
     .populate("category", "name _id");
 
   if (!product) {
-    return next(new AppError("Product not found", 404));
+    return next(new Error("Product not found", { cause: 404 }));
   }
 
   res.status(200).json({ message: "Product retrieved", product });
@@ -57,7 +56,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   if (category) {
     const categoryExists = await categoryModel.findById(category);
     if (!categoryExists) {
-      return next(new AppError("Invalid category ID", 400));
+      return next(new Error("Invalid category ID", { cause: 400 }));
     }
   }
 
@@ -74,7 +73,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     .populate("category", "name _id");
 
   if (!updated) {
-    return next(new AppError("Product not found", 404));
+    return next(new Error("Product not found", { cause: 404 }));
   }
 
   res.status(200).json({ message: "Product updated", product: updated });
@@ -84,7 +83,7 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
   const deleted = await productModel.findByIdAndUpdate(req.params.id, { isDeleted: true }, { new: true });
 
   if (!deleted) {
-    return next(new AppError("Product not found", 404));
+    return next(new Error("Product not found", { cause: 404 }));
   }
 
   res.status(200).json({ message: "Product deleted" });
@@ -95,7 +94,7 @@ export const getProductByName = asyncHandler(async (req, res, next) => {
   const product = await productModel.findOne({ name, isDeleted: false });
 
   if (!product) {
-    return next(new AppError("Product Not Found", 404));
+    return next(new Error("Product Not Found", { cause: 404 }));
   }
 
   res.status(200).json({ message: "Product retrieved", product });
@@ -115,7 +114,7 @@ export const getProductsByCatId = asyncHandler(async (req, res, next) => {
     .populate("category", "name _id");
 
   if (!products.length) {
-    return next(new AppError("No Products Found for this category", 404));
+    return next(new Error("No Products Found for this category", { cause: 404 }));
   }
 
   const total = await productModel.countDocuments({ category: categoryID, isDeleted: false });
