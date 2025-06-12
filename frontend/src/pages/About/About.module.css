@@ -1,0 +1,42 @@
+.aboutContainer {
+  padding: 2rem;
+  direction: rtl;
+  text-align: right;
+}
+
+.headerSection {
+  background-color: #e9f5e9;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.headerSection h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2e7d32;
+}
+
+.contentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.textBlock {
+  background-color: #fdfdfd;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.textBlock h2 {
+  color: #388e3c;
+  margin-bottom: 0.5rem;
+}
+
+.textBlock ul {
+  list-style: disc;
+  padding-right: 1.5rem;
+}

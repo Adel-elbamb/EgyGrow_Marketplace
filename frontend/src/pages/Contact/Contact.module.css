@@ -1,0 +1,115 @@
+.contactContainer {
+  padding: 2rem;
+  direction: rtl;
+  text-align: right;
+}
+
+.mapContainer {
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+h1 {
+  color: #2e7d32;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+p {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.contactForm {
+  flex: 1;
+  min-width: 250px; 
+  background-color: #f7f7f7;
+  padding: 4rem;  
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+
+.contactForm label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.contactForm input,
+.contactForm textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.contactForm button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contactForm button:hover {
+  background-color: #388e3c;
+}
+
+.contactInfo {
+  flex: 1;
+  min-width: 250px;
+  background: #e9f5e9;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.contactInfo h3 {
+  color: #2e7d32;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.contactInfo p {
+  margin: 0.5rem 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.contactInfo strong {
+  color: #1b5e20;
+}
+
+.socialIcons {
+  margin-top: 2rem;
+  display: flex;
+  gap: 15px;
+}
+
+.socialIcons a {
+  font-size: 1.5rem;
+  color: #4caf50;
+  transition: color 0.3s ease;
+}
+
+.socialIcons a:hover {
+  color: #2e7d32;
+}

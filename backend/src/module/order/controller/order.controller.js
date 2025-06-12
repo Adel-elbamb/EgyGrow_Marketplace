@@ -8,7 +8,6 @@ import { sendEmail } from "../../../utils/sendEmail.js";
 // create new order
 export const createOrder = asyncHandler(async (req, res, next) => {
   const order = req.body;
-
   const productIds = order.products.map((prod) => prod.productId);
   const products = await Product.find({ _id: { $in: productIds } });
 
