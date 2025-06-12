@@ -37,7 +37,7 @@ export const createCoupon = asyncHandler(async (req, res, next) => {
         failed,
       });
     }
-    return next(new AppError("Failed to insert coupons", 500));
+    next(new AppError("Failed to insert coupons", 500));
   }
 });
 
@@ -52,7 +52,9 @@ export const updateCouponStatus = asyncHandler(async (req, res, next) => {
   );
 
   if (!updatedCoupon) {
-    return next(new AppError("Coupon not found", 404));
+    return res
+      .status(404)
+      .json({ success: false, message: "Coupon not found" });
   }
 
   res.status(200).json({
@@ -66,7 +68,9 @@ export const deleteCoupon = asyncHandler(async (req, res, next) => {
   const deletedCoupon = await couponModel.findByIdAndDelete(id);
 
   if (!deletedCoupon) {
-    return next(new AppError("Coupon not found", 404));
+    return res
+      .status(404)
+      .json({ success: false, message: "Coupon not found" });
   }
 
   res.status(200).json({
@@ -77,8 +81,8 @@ export const deleteCoupon = asyncHandler(async (req, res, next) => {
 
 export const getAllCoupons = asyncHandler(async (req, res, next) => {
   const coupons = await couponModel.find();
-  if (!coupons.length) {
-    return next(new AppError("No Coupons Found", 404));
+  if (!coupons) {
+    return next(new Error("No Coupons Found", { statusCode: 404 }));
   }
 
   return res.status(200).json({ success: true, data: coupons });

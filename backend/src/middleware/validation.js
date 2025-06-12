@@ -4,38 +4,23 @@ const validation = (schema) => {
 const validation = (schema) => {
     return (req, res, next) => {
         try {
-            let validationErrors = [];
-
-            // Validate request body if schema has body validation
-            if (schema.body) {
-                const bodyValidation = schema.body.validate(req.body, { abortEarly: false });
-                if (bodyValidation.error) {
-                    validationErrors.push(...bodyValidation.error.details);
-                }
+            let methods = { ...req.body, ...req.params, ...req.query };
+            
+            if (req.file) {
+                methods.file = req.file;
             }
-
-            // Validate URL parameters if schema has params validation
-            if (schema.params) {
-                const paramsValidation = schema.params.validate(req.params, { abortEarly: false });
-                if (paramsValidation.error) {
-                    validationErrors.push(...paramsValidation.error.details);
-                }
+            if (req.files) {
+                methods.files = req.files;
             }
-
-            // Validate query parameters if schema has query validation
-            if (schema.query) {
-                const queryValidation = schema.query.validate(req.query, { abortEarly: false });
-                if (queryValidation.error) {
-                    validationErrors.push(...queryValidation.error.details);
-                }
+            if (req.headers.auth && containHeaders) {
+                methods = { auth: req.headers.auth };
             }
-
-            // Handle file uploads if present
-            if (schema.file && req.file) {
-                const fileValidation = schema.file.validate(req.file, { abortEarly: false });
-                if (fileValidation.error) {
-                    validationErrors.push(...fileValidation.error.details);
-                }
+            
+            const validationresult = schema.validate(methods, { abortEarly: false });
+            
+            if (validationresult.error) {
+                req.validationresult = validationresult.error;
+                return next(new Error('validation error', { cause: 400 }));
             }
 
             if (schema.files && req.files) {

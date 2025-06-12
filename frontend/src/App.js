@@ -1,4 +1,19 @@
 import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
+import { Toaster } from "react-hot-toast";
+
+// Pages
+import Login from "./pages/Login/Login.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard/AdminDashboard.jsx";
+import Products from "./pages/admin/Products/Products.jsx";
+
+// Styles
 import "./App.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -19,26 +34,48 @@ import ProductDetails from './pages/ProductDetails/ProductDetails';
 
 
 
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("user_token");
+
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
+};
+
 function App() {
   return (
-    <Router>
-  <div className="app-wrapper">
-    <Navbar />
-    <div className="content container mt-5">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/products" element={<ProductAll />} />
-        <Route path="product/:id" element={<ProductDetails />} />
-
-        <Route path="/login" element={<Login />} />
-
-      </Routes>
-    </div>
-    <Footer />
-  </div>
-</Router>
+    <HelmetProvider>
+      <Router>
+        <div className="app-container">
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Navigate to="/login" />} />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/products"
+                element={
+                  <ProtectedRoute>
+                    <Products />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+      <Toaster />
+    </HelmetProvider>
   );
 }
 
